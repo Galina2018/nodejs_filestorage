@@ -1,0 +1,14 @@
+[
+  {
+    "fileName": "doc1.txt",
+    "description": "коммент к файлу doc1.txt"
+  },
+  {
+    "fileName": "doc2.txt",
+    "description": "коммент к файлу doc2.txt"
+  },
+  {
+    "fileName": "doc3.txt",
+    "description": "коммент к файлу doc3.txt"
+  }
+]
