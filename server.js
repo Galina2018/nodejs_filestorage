@@ -55,7 +55,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
   console.log(1);
   let clients = [];
   let timer = 0;
-  const ws = new WebSocket.Server({ port: 5632 });
+  const ws = new WebSocket.Server({ port: 7381 });
   console.log(2, ws.options.port);
   ws.on('connection', (connection) => {
     console.log(3);

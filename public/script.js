@@ -51,7 +51,7 @@ async function fileUpload(evt) {
   const fileProgress = document.getElementById('fileProgress');
 
   // const url = 'ws://nodearch.e-learning.by:5632';
-  const url = 'ws://localhost:5632';
+  const url = 'ws://localhost:7381';
   let connection = new WebSocket(url);
   connection.onopen = (event) => {
     console.log(
