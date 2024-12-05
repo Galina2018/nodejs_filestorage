@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const mime = require('mime/lite');
+// const mime = require('mime/lite');
+// const mime = require('mime');
 const multer = require('multer');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
@@ -40,9 +41,9 @@ webserver.get('/getListFiles', (req, res) => {
 webserver.post('/download', (req, res) => {
   let filename = req.body;
   let filePath = path.resolve(__dirname, 'public', filename);
-  let mimetype = mime.getType(filename);
+  // let mimetype = mime.getType(filename);
   res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-  res.setHeader('Content-type', mimetype);
+  // res.setHeader('Content-type', mimetype);
   res.download(filePath, (err) => {
     if (err) {
       res.status(500).send('Ошибка при скачивании файла');
