@@ -1,0 +1,12 @@
+.box {
+  min-height: 150px;
+  min-width: 50px;
+}
+
+.w80 {
+  width: 80%;
+}
+
+.hidden {
+  display: none;
+}

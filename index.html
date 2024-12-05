@@ -3,10 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <title>Document</title>
   </head>
   <body>
     <div id="listfiles"></div>
+    <br /><br />
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="file">Файл для загрузки на сервер:</label><br />
+      <input type="file" id="file" name="file" accept=".txt" />
+      <button>Загрузить</button><br />
+    </form>
+    <br />
+    <label for="file">Прогресс загрузки файла:</label>
+    <progress id="fileProgress" max="100" value="0"></progress>
+    <br /><br /><br /><br />
+    <label for="comment" id="labelForComment"></label><br />
+    <textarea id="comment" class="box w80 hidden"></textarea><br />
+    <button id="btnAddComment" class="hidden" onclick="addComment()">
+      Добавить
+    </button>
   </body>
 </html>
 
