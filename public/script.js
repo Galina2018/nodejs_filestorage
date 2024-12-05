@@ -50,8 +50,8 @@ async function fileUpload(evt) {
   const file = document.getElementById('file');
   const fileProgress = document.getElementById('fileProgress');
 
-  const url = 'ws://nodearch.e-learning.by:5632';
-  // const url = 'ws://localhost:5632';
+  // const url = 'ws://nodearch.e-learning.by:5632';
+  const url = 'ws://localhost:5632';
   let connection = new WebSocket(url);
   connection.onopen = (event) => {
     console.log(
