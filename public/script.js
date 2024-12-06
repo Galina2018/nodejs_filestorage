@@ -50,9 +50,10 @@ async function fileUpload(evt) {
   const file = document.getElementById('file');
   const fileProgress = document.getElementById('fileProgress');
 
-  // const url = 'ws://nodearch.e-learning.by:5632';
-  const url = 'ws://localhost:7381';
+  // const url = 'ws://localhost:7381';
+  const url = 'ws://178.172.195.18:7381';
   let connection = new WebSocket(url);
+  console.log(10);
   connection.onopen = (event) => {
     console.log(
       'Successfully CONNECTED to the echo websocket server...',
@@ -60,7 +61,7 @@ async function fileUpload(evt) {
     );
   };
   connection.onmessage = function(event) {
-    // console.log('клиентом получено сообщение от сервера: ' + event.data);
+    console.log('клиентом получено сообщение от сервера: ' + event.data);
     if (Number.isFinite(+event.data)) fileProgress.value = +event.data;
   };
   connection.onerror = function(event) {
