@@ -52,13 +52,10 @@ webserver.post('/download', (req, res) => {
 });
 
 webserver.post('/upload', upload.single('file'), (req, res) => {
-  console.log(1);
   let clients = [];
   let timer = 0;
   const ws = new WebSocket.Server({ port: 7381 });
-  console.log(2, ws.options.port);
   ws.on('connection', (connection) => {
-    console.log(3);
     connection.send('hello from server to client!');
     let stats = 0;
     let progress = 0;
@@ -68,15 +65,12 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     );
     readStream.pipe(writeStream);
 
-    console.log(4);
     readStream.on('data', (chunk) => {
-      // console.log(5);
       stats += chunk.length;
       progress = Math.floor((stats / req.file.size) * 100);
       connection.send(progress);
     });
 
-    console.log(6);
     connection.on('message', (message) => {
       if (message === 'KEEP_ME_ALIVE') {
         clients.forEach((client) => {
@@ -88,10 +82,8 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     clients.push({ connection: connection, lastkeepalive: Date.now() });
 
     readStream.on('end', () => {
-      console.log(7);
       connection.send(100);
       connection.send('Процесс закачивания файла завершен!');
-      // res.send('File uploaded successfully');
       const fd = path.resolve(__dirname, 'public', 'list.json');
       fs.readFile(fd, 'utf8', (err, arr) => {
         if (err) {
@@ -113,15 +105,11 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
           });
         }
       });
-      console.log(71);
       res.send('File uploaded successfully');
-      res.end();
     });
   });
-  console.log(8);
 
   setInterval(() => {
-    console.log(9);
     timer++;
     clients.forEach((client) => {
       if (Date.now() - client.lastkeepalive > 12000) {
