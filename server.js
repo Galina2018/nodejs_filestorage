@@ -70,9 +70,9 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
 
     console.log(4);
     readStream.on('data', (chunk) => {
-      console.log(5);
+      // console.log(5);
       stats += chunk.length;
-      progress = Math.round((stats / req.file.size) * 100);
+      progress = (stats / req.file.size) * 100;
       connection.send(progress);
     });
 
@@ -88,19 +88,29 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     clients.push({ connection: connection, lastkeepalive: Date.now() });
 
     readStream.on('end', () => {
-      // connection.close();
       console.log(7);
-      let arr = fs.readFileSync(
-        path.resolve(__dirname, 'public', 'list.json'),
-        'utf8'
-      );
-      let data = JSON.parse(arr);
-      data.push({ fileName: req.file.originalname, comments: [] });
-      fs.writeFileSync(
-        path.resolve(__dirname, 'public', 'list.json'),
-        JSON.stringify(data),
-        'utf8'
-      );
+      const fd = path.resolve(__dirname, 'public', 'list.json');
+      fs.readFile(fd, 'utf8', (err, arr) => {
+        if (err) {
+          console.error(err);
+        } else {
+          let data;
+          try {
+            data = JSON.parse(arr);
+            data.push({ fileName: req.file.originalname, comments: [] });
+          } catch (err) {
+            console.error(err);
+          }
+          fs.writeFile(fd, JSON.stringify(data), (err) => {
+            if (err) {
+              console.error(err);
+            } else {
+              // console.log('Объект успешно добавлен');
+            }
+          });
+        }
+      });
+
       res.send('File uploaded successfully');
       console.log(71);
     });

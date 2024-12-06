@@ -63,6 +63,8 @@ async function fileUpload(evt) {
   connection.onmessage = function(event) {
     console.log('клиентом получено сообщение от сервера: ' + event.data);
     if (Number.isFinite(+event.data)) fileProgress.value = +event.data;
+    if (Number.isFinite(+event.data) && +event.data == 100)
+      console.log('Процесс закачивания файла завершен.');
   };
   connection.onerror = function(event) {
     console.log('websocket server error', event);
