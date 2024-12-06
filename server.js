@@ -78,7 +78,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
 
     console.log(6);
     connection.on('message', (message) => {
-      if (message === 'KEEP_ME_ALIVE') {
+      if (message === 'KEEP_ME_ALIVE.') {
         clients.forEach((client) => {
           if (client.connection === connection)
             client.lastkeepalive = Date.now();
