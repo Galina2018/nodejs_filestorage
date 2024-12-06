@@ -72,7 +72,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     readStream.on('data', (chunk) => {
       // console.log(5);
       stats += chunk.length;
-      progress = (stats / req.file.size) * 100;
+      progress = Math.floor((stats / req.file.size) * 100);
       connection.send(progress);
     });
 
