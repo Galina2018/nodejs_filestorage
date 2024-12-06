@@ -63,8 +63,10 @@ async function fileUpload(evt) {
   connection.onmessage = function(event) {
     console.log('клиентом получено сообщение от сервера: ' + event.data);
     if (Number.isFinite(+event.data)) fileProgress.value = +event.data;
-    if (Number.isFinite(+event.data) && +event.data == 100)
+    if (Number.isFinite(+event.data) && +event.data == 100) {
       console.log('Процесс закачивания файла завершен.');
+      connection.close();
+    }
   };
   connection.onerror = function(event) {
     console.log('websocket server error', event);
@@ -73,10 +75,12 @@ async function fileUpload(evt) {
     console.log('websocket server closed', event);
     connection = null;
     clearInterval(keepAliveTimer);
+    // keepAliveTimer = null;
     fileProgress.value = 0;
     getPage();
   };
   let keepAliveTimer = setInterval(() => {
+    console.log('in setInterval');
     connection.send('KEEP_ME_ALIVE');
   }, 5000);
 
