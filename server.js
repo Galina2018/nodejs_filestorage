@@ -91,7 +91,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
       console.log(7);
       connection.send(100);
       connection.send('Процесс закачивания файла завершен!');
-      res.send('File uploaded successfully');
+      // res.send('File uploaded successfully');
       const fd = path.resolve(__dirname, 'public', 'list.json');
       fs.readFile(fd, 'utf8', (err, arr) => {
         if (err) {
@@ -114,8 +114,8 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
         }
       });
       console.log(71);
-      // res.send('File uploaded successfully');
-      // res.end();
+      res.send('File uploaded successfully');
+      res.end();
     });
   });
   console.log(8);
