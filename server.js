@@ -112,11 +112,9 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
           });
         }
       });
-
       console.log(71);
+      res.send('File uploaded successfully');
     });
-    // res.send('File uploaded successfully');
-    res.status(200);
   });
   console.log(8);
 
