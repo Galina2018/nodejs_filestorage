@@ -1,8 +1,6 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-// const mime = require('mime/lite');
-// const mime = require('mime');
 const multer = require('multer');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
@@ -41,9 +39,7 @@ webserver.get('/getListFiles', (req, res) => {
 webserver.post('/download', (req, res) => {
   let filename = req.body;
   let filePath = path.resolve(__dirname, 'public', filename);
-  // let mimetype = mime.getType(filename);
   res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-  // res.setHeader('Content-type', mimetype);
   res.download(filePath, (err) => {
     if (err) {
       res.status(500).send('Ошибка при скачивании файла');
@@ -52,75 +48,85 @@ webserver.post('/download', (req, res) => {
 });
 
 webserver.post('/upload', upload.single('file'), (req, res) => {
-  let clients = [];
-  let timer = 0;
-  const ws = new WebSocket.Server({ port: 7381 });
-  ws.on('connection', (connection) => {
-    connection.send('hello from server to client!');
-    let stats = 0;
-    let progress = 0;
-    let readStream = fs.createReadStream(req.file.originalname);
-    let writeStream = fs.createWriteStream(
-      path.join(__dirname, 'public', req.file.originalname)
-    );
-    readStream.pipe(writeStream);
+  if (req.file) {
+    let clients = [];
+    let timer = 0;
+    const ws = new WebSocket.Server({ port: 7381 });
+    ws.on('connection', (connection) => {
+      connection.send('hello from server to client!');
+      let stats = 0;
+      let progress = 0;
 
-    readStream.on('data', (chunk) => {
-      stats += chunk.length;
-      progress = Math.floor((stats / req.file.size) * 100);
-      connection.send(progress);
-    });
+      let readStream = fs.createReadStream(req.file.originalname);
+      let writeStream = fs.createWriteStream(
+        path.join(__dirname, 'public', req.file.originalname)
+      );
+      readStream.pipe(writeStream);
 
-    connection.on('message', (message) => {
-      if (message === 'KEEP_ME_ALIVE') {
-        clients.forEach((client) => {
-          if (client.connection === connection)
-            client.lastkeepalive = Date.now();
-        });
-      } else console.log('сервером получено сообщение от клиента: ' + message);
-    });
-    clients.push({ connection: connection, lastkeepalive: Date.now() });
-
-    readStream.on('end', () => {
-      connection.send(100);
-      connection.send('Процесс закачивания файла завершен!');
-      const fd = path.resolve(__dirname, 'public', 'list.json');
-      fs.readFile(fd, 'utf8', (err, arr) => {
-        if (err) {
-          console.error(err);
-        } else {
-          let data;
-          try {
-            data = JSON.parse(arr);
-            data.push({ fileName: req.file.originalname, comments: [] });
-          } catch (err) {
-            console.error(err);
-          }
-          fs.writeFile(fd, JSON.stringify(data), (err) => {
-            if (err) {
-              console.error(err);
-            } else {
-              // console.log('Объект успешно добавлен');
-            }
-          });
-        }
+      readStream.on('data', (chunk) => {
+        stats += chunk.length;
+        progress = (stats / req.file.size) * 100;
+        connection.send(progress);
       });
-      res.send('File uploaded successfully');
-    });
-  });
 
-  setInterval(() => {
-    timer++;
-    clients.forEach((client) => {
-      if (Date.now() - client.lastkeepalive > 12000) {
-        client.connection.terminate();
-        client.connection = null;
-      } else client.connection.send('timer=' + timer);
-    });
-    clients = clients.filter((client) => client.connection);
-  }, 3000);
+      // readStream.on('error', function (err) {
+      //   console.log('in error readStream')
+      //   if (err.code == 'ENOENT') {
+      //     console.log('Файл не найден');
+      //   } else {
+      //     console.error(err);
+      //   }
+      // });
 
-  // res.send('File uploaded successfully');
+        writeStream.on('finish', () => {
+        connection.send(100);
+        connection.send('Процесс закачивания файла завершен!');
+        const fd = path.resolve(__dirname, 'public', 'list.json');
+        fs.readFile(fd, 'utf8', (err, arr) => {
+          if (err) {
+            console.error(err);
+          } else {
+            let data;
+            try {
+              data = JSON.parse(arr);
+              data.push({ fileName: req.file.originalname, comments: [] });
+            } catch (err) {
+              console.error(err);
+            }
+            fs.writeFile(fd, JSON.stringify(data), (err) => {
+              if (err) {
+                console.error(err);
+              }
+            });
+          }
+        });
+        res.end();
+      });
+
+      connection.on('message', (message) => {
+        if (message === 'KEEP_ME_ALIVE') {
+          clients.forEach((client) => {
+            if (client.connection === connection)
+              client.lastkeepalive = Date.now();
+          });
+        } else
+          console.log('сервером получено сообщение от клиента: ' + message);
+      });
+      clients.push({ connection: connection, lastkeepalive: Date.now() });
+    });
+
+    setInterval(() => {
+      timer++;
+      clients.forEach((client) => {
+        if (Date.now() - client.lastkeepalive > 12000) {
+          client.connection.terminate();
+          client.connection = null;
+        } else client.connection.send('timer=' + timer);
+      });
+      clients = clients.filter((client) => client.connection);
+    }, 3000);
+  }
+  res.end();
 });
 
 webserver.post('/getComment', (req, res) => {
