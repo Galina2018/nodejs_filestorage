@@ -75,7 +75,7 @@ async function fileUpload(evt) {
     console.log('websocket server closed', event);
     connection = null;
     clearInterval(keepAliveTimer);
-    // keepAliveTimer = null;
+    keepAliveTimer = null;
     fileProgress.value = 0;
     getPage();
   };
