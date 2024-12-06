@@ -1,1 +1,18 @@
-[{"fileName":"doc1.txt","comments":["коммент к файлу","еще один комментарий","one more"]},{"fileName":"doc2.txt","comments":["первый коммент к файлу","второй коммент к файлу"]},{"fileName":"doc3.txt","comments":["тест1","коммент 2","это комментарий","еще один коммент"]},{"fileName":"doc4.txt","comments":[]}]
+[
+  {
+    "fileName": "doc1.txt",
+    "comments": ["коммент к файлу", "еще один комментарий", "one more"]
+  },
+  {
+    "fileName": "doc2.txt",
+    "comments": ["первый коммент к файлу", "второй коммент к файлу"]
+  },
+  {
+    "fileName": "doc3.txt",
+    "comments": ["тест1", "коммент 2", "это комментарий", "еще один коммент"]
+  },
+  {
+    "fileName": "doc4.txt",
+    "comments": []
+  }
+]
