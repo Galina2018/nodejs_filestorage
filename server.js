@@ -113,7 +113,8 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
         }
       });
       console.log(71);
-      res.send('File uploaded successfully');
+      // res.send('File uploaded successfully');
+      // res.end();
     });
   });
   console.log(8);
@@ -129,6 +130,8 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     });
     clients = clients.filter((client) => client.connection);
   }, 3000);
+
+  res.send('File uploaded successfully');
 });
 
 webserver.post('/getComment', (req, res) => {
