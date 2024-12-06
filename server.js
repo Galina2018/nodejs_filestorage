@@ -88,8 +88,8 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     clients.push({ connection: connection, lastkeepalive: Date.now() });
 
     readStream.on('end', () => {
+      // connection.close();
       console.log(7);
-      connection.close();
       let arr = fs.readFileSync(
         path.resolve(__dirname, 'public', 'list.json'),
         'utf8'
@@ -102,11 +102,13 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
         'utf8'
       );
       res.send('File uploaded successfully');
+      console.log(71);
     });
   });
   console.log(8);
 
   setInterval(() => {
+    console.log(9);
     timer++;
     clients.forEach((client) => {
       if (Date.now() - client.lastkeepalive > 12000) {
