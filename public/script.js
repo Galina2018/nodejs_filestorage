@@ -53,7 +53,6 @@ async function fileUpload(evt) {
   // const url = 'ws://localhost:7381';
   const url = 'ws://178.172.195.18:7381';
   let connection = new WebSocket(url);
-  console.log(10);
   connection.onopen = (event) => {
     console.log(
       'Successfully CONNECTED to the echo websocket server...',
@@ -80,7 +79,6 @@ async function fileUpload(evt) {
     getPage();
   };
   let keepAliveTimer = setInterval(() => {
-    console.log('in setInterval');
     connection.send('KEEP_ME_ALIVE');
   }, 5000);
 
