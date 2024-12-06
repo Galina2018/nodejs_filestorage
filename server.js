@@ -78,7 +78,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
 
     console.log(6);
     connection.on('message', (message) => {
-      if (message === 'KEEP_ME_ALIVE.') {
+      if (message === 'KEEP_ME_ALIVE') {
         clients.forEach((client) => {
           if (client.connection === connection)
             client.lastkeepalive = Date.now();
@@ -91,6 +91,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
       console.log(7);
       connection.send(100);
       connection.send('Процесс закачивания файла завершен!');
+      res.send('File uploaded successfully');
       const fd = path.resolve(__dirname, 'public', 'list.json');
       fs.readFile(fd, 'utf8', (err, arr) => {
         if (err) {
@@ -131,7 +132,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     clients = clients.filter((client) => client.connection);
   }, 3000);
 
-  res.send('File uploaded successfully');
+  // res.send('File uploaded successfully');
 });
 
 webserver.post('/getComment', (req, res) => {
