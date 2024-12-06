@@ -81,7 +81,7 @@ async function fileUpload(evt) {
   };
   let keepAliveTimer = setInterval(() => {
     console.log('in setInterval');
-    connection.send('KEEP_ME_ALIVE');
+    connection.send('KEEP_ME_ALIVE.');
   }, 5000);
 
   try {
