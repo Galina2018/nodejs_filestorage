@@ -89,6 +89,8 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
 
     readStream.on('end', () => {
       console.log(7);
+      connection.send('Процесс закачивания файла завершен!');
+      connection.send(100);
       const fd = path.resolve(__dirname, 'public', 'list.json');
       fs.readFile(fd, 'utf8', (err, arr) => {
         if (err) {
