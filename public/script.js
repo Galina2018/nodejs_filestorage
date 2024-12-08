@@ -50,47 +50,50 @@ async function fileUpload(evt) {
   const file = document.getElementById('file');
   const fileProgress = document.getElementById('fileProgress');
 
-  // const url = 'ws://localhost:7381';
-  const url = 'ws://178.172.195.18:7381';
+  const url = 'ws://localhost:7381';
+  // const url = 'ws://178.172.195.18:7381';
   let connection = new WebSocket(url);
-  connection.onopen = (event) => {
+  connection.onopen = async (event) => {
     console.log(
       'Successfully CONNECTED to the echo websocket server...',
       event
     );
+    try {
+      await fetch('/upload', {
+        method: 'POST',
+        body: new FormData(form),
+      });
+      file.value = '';
+    } catch (error) {
+      console.error('Ошибка при загрузке файла:', error);
+    }
   };
-  connection.onmessage = function(event) {
+  connection.onmessage = function (event) {
     console.log('клиентом получено сообщение от сервера: ' + event.data);
     if (Number.isFinite(+event.data)) fileProgress.value = +event.data;
     if (Number.isFinite(+event.data) && +event.data == 100) {
       console.log('Процесс закачивания файла завершен.');
-      connection.close();
+      if (event.data == 'Файл json обновлен.') {
+        console.log('Файл json обновлен.');
+        connection.close();
+      }
     }
   };
-  connection.onerror = function(event) {
+  connection.onerror = function (event) {
     console.log('websocket server error', event);
+    connection.close();
+    clearInterval(keepAliveTimer);
   };
-  connection.onclose = function(event) {
+  connection.onclose = function (event) {
     console.log('websocket server closed', event);
     connection = null;
     clearInterval(keepAliveTimer);
-    keepAliveTimer = null;
     fileProgress.value = 0;
     getPage();
   };
   let keepAliveTimer = setInterval(() => {
     connection.send('KEEP_ME_ALIVE');
   }, 5000);
-
-  try {
-    await fetch('/upload', {
-      method: 'POST',
-      body: new FormData(form),
-    });
-    file.value = '';
-  } catch (error) {
-    console.error('Ошибка при загрузке файла:', error);
-  }
 }
 
 async function showComment(fileName) {
