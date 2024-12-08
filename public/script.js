@@ -63,7 +63,6 @@ async function fileUpload(evt) {
         method: 'POST',
         body: new FormData(form),
       });
-      file.value = '';
     } catch (error) {
       console.error('Ошибка при загрузке файла:', error);
     }
@@ -73,10 +72,11 @@ async function fileUpload(evt) {
     if (Number.isFinite(+event.data)) fileProgress.value = +event.data;
     if (Number.isFinite(+event.data) && +event.data == 100) {
       console.log('Процесс закачивания файла завершен.');
-      if (event.data == 'Файл json обновлен.') {
-        console.log('Файл json обновлен.');
-        connection.close();
-      }
+      file.value = '';
+    }
+    if (event.data == 'Файл json обновлен.') {
+      console.log('Файл json обновлен.');
+      connection.close();
     }
   };
   connection.onerror = function (event) {
