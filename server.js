@@ -48,13 +48,15 @@ webserver.post('/download', (req, res) => {
   });
 });
 
-let connection_ = null;
+let connection_;
 let clients = [];
 let timer = 0;
 
 const ws = new WebSocket.Server({ port: 7381 });
 ws.on('connection', (connection) => {
   connection_ = connection;
+  console.log(100, connection.readyState)
+  console.log(200, connection_.readyState)
   connection.send('hello from server to client!');
   connection.on('message', (message) => {
     if (message === 'KEEP_ME_ALIVE') {
