@@ -127,12 +127,10 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
           });
         }
       });
-      // res.end();
-      res.send('ok');
+      res.end();
     });
   }
-  // res.end();
-  res.send('ok.');
+  res.end();
 });
 
 webserver.post('/getComment', (req, res) => {
