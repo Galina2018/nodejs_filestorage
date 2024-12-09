@@ -80,7 +80,9 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
     let stats = 0;
     let progress = 0;
     console.log(111, req.file.originalname);
-    let readStream = fs.createReadStream(req.file.originalname);
+    let readStream = fs.createReadStream(req.file.originalname, {
+      encoding: 'UTF-8',
+    });
     let writeStream = fs.createWriteStream(
       path.join(__dirname, 'public', req.file.originalname)
     );
