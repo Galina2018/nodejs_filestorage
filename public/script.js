@@ -76,8 +76,6 @@ async function fileUpload(evt) {
       console.log('Процесс закачивания файла завершен.');
       fileProgress.value = 0;
       file.value = '';
-      connection.close();
-      clearInterval(keepAliveTimer);
     }
     if (event.data == 'Файл json обновлен.') {
       console.log('Файл json обновлен.');

@@ -99,6 +99,27 @@ webserver.post('/upload', (req, res) => {
         fileProgress.file.filename
     );
     res.send('File ' + fileProgress.file.originalname + ' uploaded');
+    const fd = path.resolve(__dirname, 'public', 'list.json');
+    fs.readFile(fd, 'utf8', (err, arr) => {
+      if (err) {
+        console.error(err);
+      } else {
+        let data;
+        try {
+          data = JSON.parse(arr);
+          data.push({ fileName: fileProgress.file.originalname, comments: [] });
+        } catch (err) {
+          console.error(err);
+        }
+        fs.writeFile(fd, JSON.stringify(data), (err) => {
+          if (err) {
+            console.error(err);
+          } else {
+            connection_.send('Файл json обновлен.');
+          }
+        });
+      }
+    });
   });
 });
 
