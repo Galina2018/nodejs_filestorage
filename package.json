@@ -9,7 +9,8 @@
     "express": "4.21.1",
     "mime": "^4.0.4",
     "multer": "1.4.5-lts.1",
-    "ws": "^7.5.10"
+    "ws": "^7.5.10",
+    "progress-stream": "^2.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

@@ -30,7 +30,7 @@ async function fileDownload(fileName) {
   const response = await fetch('/download', {
     method: 'POST',
     headers: {
-      // 'Content-Type': 'text/plain',
+      'Content-Type': 'text/plain',
     },
     body: fileName,
   });
@@ -46,12 +46,13 @@ form.onsubmit = (evt) => fileUpload(evt);
 
 async function fileUpload(evt) {
   evt.preventDefault();
-  const form = document.getElementById('uploadForm');
   const file = document.getElementById('file');
+  const formData = new FormData();
+  formData.append('file', file.files[0]);
   const fileProgress = document.getElementById('fileProgress');
 
-  // const url = 'ws://localhost:7381';
-  const url = 'ws://178.172.195.18:7381';
+  const url = 'ws://localhost:7381';
+  // const url = 'ws://178.172.195.18:7381';
   let connection = new WebSocket(url);
   connection.onopen = async (event) => {
     console.log(
@@ -61,7 +62,8 @@ async function fileUpload(evt) {
     try {
       await fetch('/upload', {
         method: 'POST',
-        body: new FormData(form),
+        headers: new Headers({}),
+        body: formData,
       });
     } catch (error) {
       console.error('Ошибка при загрузке файла:', error);
@@ -72,6 +74,7 @@ async function fileUpload(evt) {
     if (Number.isFinite(+event.data)) fileProgress.value = +event.data;
     if (Number.isFinite(+event.data) && +event.data == 100) {
       console.log('Процесс закачивания файла завершен.');
+      fileProgress.value = 0;
       file.value = '';
     }
     if (event.data == 'Файл json обновлен.') {
@@ -86,7 +89,7 @@ async function fileUpload(evt) {
   };
   connection.onclose = function(event) {
     console.log('websocket server closed', event);
-    connection = null;
+    connection.close();
     clearInterval(keepAliveTimer);
     fileProgress.value = 0;
     getPage();

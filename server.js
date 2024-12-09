@@ -4,6 +4,8 @@ const fs = require('fs');
 const multer = require('multer');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
+// const busboy = require('connect-busboy');
+const progress = require('progress-stream');
 
 const webserver = express();
 
@@ -75,66 +77,50 @@ setInterval(() => {
   clients = clients.filter((client) => client.connection);
 }, 3000);
 
-webserver.post('/upload', upload.single('file'), (req, res) => {
-  if (req.file) {
-    let stats = 0;
-    let progress = 0;
-    console.log(111, req.file.originalname);
-    let readStream = fs.createReadStream(req.file.originalname, {
-      encoding: 'UTF-8',
-    });
-    let writeStream = fs.createWriteStream(
-      path.join(__dirname, 'public', req.file.originalname)
+const uploadFile = upload.single('file');
+webserver.post('/upload', (req, res) => {
+  let prfile = 0;
+  var fileProgress = progress();
+  const fileLength = +req.headers['content-length'];
+
+  req.pipe(fileProgress);
+  fileProgress.headers = req.headers;
+
+  fileProgress.on('progress', (info) => {
+    prfile = connection_.send((info.transferred / +fileLength) * 100);
+  });
+
+  uploadFile(fileProgress, res, async (err) => {
+    if (err) return res.status(500);
+    console.log(
+      'file saved, origin filename=' +
+        fileProgress.file.originalname +
+        ', store filename=' +
+        fileProgress.file.filename
     );
-    readStream.pipe(writeStream);
-
-    readStream.on('data', (chunk) => {
-      stats += chunk.length;
-      progress = (stats / req.file.size) * 100;
-      connection_.send(progress);
-    });
-
-    readStream.on('error', function(err) {
-      console.log('in error readStream');
-      if (err.code == 'ENOENT') {
-        console.log('Файл не найден: ', JSON.stringify(err.path));
-        connection_.send('Файл не найден');
-        connection_.send(JSON.stringify(err.path));
-      } else {
+    res.send('File ' + fileProgress.file.originalname + ' uploaded');
+    const fd = path.resolve(__dirname, 'public', 'list.json');
+    fs.readFile(fd, 'utf8', (err, arr) => {
+      if (err) {
         console.error(err);
+      } else {
+        let data;
+        try {
+          data = JSON.parse(arr);
+          data.push({ fileName: fileProgress.file.originalname, comments: [] });
+        } catch (err) {
+          console.error(err);
+        }
+        fs.writeFile(fd, JSON.stringify(data), (err) => {
+          if (err) {
+            console.error(err);
+          } else {
+            connection_.send('Файл json обновлен.');
+          }
+        });
       }
     });
-    readStream.on('end', () => {
-      readStream.close();
-    });
-
-    writeStream.on('finish', () => {
-      connection_.send(100);
-      const fd = path.resolve(__dirname, 'public', 'list.json');
-      fs.readFile(fd, 'utf8', (err, arr) => {
-        if (err) {
-          console.error(err);
-        } else {
-          let data;
-          try {
-            data = JSON.parse(arr);
-            data.push({ fileName: req.file.originalname, comments: [] });
-          } catch (err) {
-            console.error(err);
-          }
-          fs.writeFile(fd, JSON.stringify(data), (err) => {
-            if (err) {
-              console.error(err);
-            } else {
-              connection_.send('Файл json обновлен.');
-            }
-          });
-        }
-      });
-      res.end();
-    });
-  }
-  res.end();
+  });
 });
 
 webserver.post('/getComment', (req, res) => {
