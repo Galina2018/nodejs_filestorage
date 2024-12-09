@@ -30,7 +30,7 @@ async function fileDownload(fileName) {
   const response = await fetch('/download', {
     method: 'POST',
     headers: {
-      'Content-Type': 'text/plain',
+      // 'Content-Type': 'text/plain',
     },
     body: fileName,
   });
@@ -67,7 +67,7 @@ async function fileUpload(evt) {
       console.error('Ошибка при загрузке файла:', error);
     }
   };
-  connection.onmessage = function (event) {
+  connection.onmessage = function(event) {
     console.log('клиентом получено сообщение от сервера: ' + event.data);
     if (Number.isFinite(+event.data)) fileProgress.value = +event.data;
     if (Number.isFinite(+event.data) && +event.data == 100) {
@@ -79,12 +79,12 @@ async function fileUpload(evt) {
       connection.close();
     }
   };
-  connection.onerror = function (event) {
+  connection.onerror = function(event) {
     console.log('websocket server error', event);
     connection.close();
     clearInterval(keepAliveTimer);
   };
-  connection.onclose = function (event) {
+  connection.onclose = function(event) {
     console.log('websocket server closed', event);
     connection = null;
     clearInterval(keepAliveTimer);

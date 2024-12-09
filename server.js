@@ -79,7 +79,7 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
   if (req.file) {
     let stats = 0;
     let progress = 0;
-
+    console.log(111, req.file.originalname);
     let readStream = fs.createReadStream(req.file.originalname);
     let writeStream = fs.createWriteStream(
       path.join(__dirname, 'public', req.file.originalname)
@@ -92,14 +92,14 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
       connection_.send(progress);
     });
 
-    readStream.on('error', function (err) {
-      console.log('in error readStream');
-      if (err.code == 'ENOENT') {
-        console.log('Файл не найден');
-      } else {
-        console.error(err);
-      }
-    });
+    // readStream.on('error', function(err) {
+    //   console.log('in error readStream');
+    //   if (err.code == 'ENOENT') {
+    //     console.log('Файл не найден');
+    //   } else {
+    //     console.error(err);
+    //   }
+    // });
     readStream.on('end', () => {
       readStream.close();
     });
