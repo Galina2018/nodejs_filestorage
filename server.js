@@ -59,7 +59,6 @@ let timer = 0;
 const ws = new WebSocket.Server({ port: 7381 });
 ws.on('connection', (connection) => {
   connection_ = connection;
-  console.log(10);
   connection.send('hello from server to client!');
   connection.on('message', (message) => {
     if (message === 'KEEP_ME_ALIVE') {
@@ -91,18 +90,12 @@ webserver.post('/upload', (req, res) => {
   fileProgress.headers = req.headers;
 
   fileProgress.on('progress', (info) => {
-    console.log(20);
     prfile = connection_.send((info.transferred / +fileLength) * 100);
   });
 
   uploadFile(fileProgress, res, async (err) => {
     if (err) return res.status(500);
-    console.log(
-      'file saved, origin filename=' +
-        fileProgress.file.originalname +
-        ', store filename=' +
-        fileProgress.file.filename
-    );
+    console.log('file saved successfully');
     res.send('File ' + fileProgress.file.originalname + ' uploaded');
     const fd = path.resolve(__dirname, 'public', 'list.json');
     fs.readFile(fd, 'utf8', (err, arr) => {
