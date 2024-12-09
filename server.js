@@ -92,14 +92,16 @@ webserver.post('/upload', upload.single('file'), (req, res) => {
       connection_.send(progress);
     });
 
-    // readStream.on('error', function(err) {
-    //   console.log('in error readStream');
-    //   if (err.code == 'ENOENT') {
-    //     console.log('Файл не найден');
-    //   } else {
-    //     console.error(err);
-    //   }
-    // });
+    readStream.on('error', function(err) {
+      console.log('in error readStream');
+      if (err.code == 'ENOENT') {
+        console.log('Файл не найден: ', JSON.stringify(err.path));
+        connection_.send('Файл не найден');
+        connection_.send(JSON.stringify(err.path));
+      } else {
+        console.error(err);
+      }
+    });
     readStream.on('end', () => {
       readStream.close();
     });
