@@ -51,8 +51,8 @@ async function fileUpload(evt) {
   formData.append('file', file.files[0]);
   const fileProgress = document.getElementById('fileProgress');
 
-  const url = 'ws://localhost:7381';
-  // const url = 'ws://178.172.195.18:7381';
+  // const url = 'ws://localhost:7381';
+  const url = 'ws://178.172.195.18:7381';
   let connection = new WebSocket(url);
   connection.onopen = async (event) => {
     console.log(
