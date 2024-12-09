@@ -59,6 +59,7 @@ let timer = 0;
 const ws = new WebSocket.Server({ port: 7381 });
 ws.on('connection', (connection) => {
   connection_ = connection;
+  console.log(10);
   connection.send('hello from server to client!');
   connection.on('message', (message) => {
     if (message === 'KEEP_ME_ALIVE') {
@@ -82,7 +83,7 @@ setInterval(() => {
 
 const uploadFile = upload.single('file');
 webserver.post('/upload', (req, res) => {
-  let prfile = 0;
+  let prfile;
   var fileProgress = progress();
   const fileLength = +req.headers['content-length'];
 
@@ -90,6 +91,7 @@ webserver.post('/upload', (req, res) => {
   fileProgress.headers = req.headers;
 
   fileProgress.on('progress', (info) => {
+    console.log(20);
     prfile = connection_.send((info.transferred / +fileLength) * 100);
   });
 
